@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const bcrypt = require("bcryptjs")
 const User = require('./Model/User');
+const jwt = require('jsonwebtoken')
 // const registerUser = require("./Routes/UserRegisteRoute") ;
 
 
@@ -13,7 +14,8 @@ const {
     DBPORT,
     DBNAME,
     HOST,
-    URI
+    URI,
+    JWT_SECRET
 } = process.env;
 
 const app = express(); 
@@ -44,6 +46,9 @@ app.listen(PORT, () => {
     console.log(`Server Started at Port ${PORT}`)
 })
 
+
+        // Register User 
+
 app.post('/Register', async (req, res) =>{ 
     console.log(req.body)
 
@@ -55,7 +60,7 @@ app.post('/Register', async (req, res) =>{
     if(!plainTextPassword || typeof plainTextPassword !== 'string') {
         return res.json({status: 'error', error: "Invalid Password"})
     }
-    if(plainTextPassword.length < 9){ 
+    if(plainTextPassword.length < 8){ 
         return res.json({status: 'error', error: "Password must be more than 8 characters "})
     }
 
@@ -77,5 +82,34 @@ app.post('/Register', async (req, res) =>{
 
     // res.json({status: "ok"})
 } )
+
+    // Login User
+
+    app.post('/login', async (req, res) => { 
+
+        const {username, password} = req.body
+
+        const user = await User.findOne({ 
+            username
+        }).lean()
+
+        if(!user){ 
+            // fail
+            return res.json({status: 'error', error: "Invalid Username or Password"})
+        }
+
+        if(bcrypt.compare(password, user.password)){
+
+            const token = jwt.sign({
+                 id: user._id, 
+                 username: user.username
+                }, JWT_SECRET)
+             // success
+             return res.json({status: 'Ok', data: token})
+             
+        }
+        
+        res.json({status: "error", error: 'Invalid Username or Password'})
+    })
 
 startServer()
