@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const bcrypt = require("bcryptjs")
 const User = require('./Model/User');
 const jwt = require('jsonwebtoken')
-// const registerUser = require("./Routes/UserRegisteRoute") ;
+const cors = require('cors')
 
 
 dotenv.config()
@@ -19,6 +19,10 @@ const {
 } = process.env;
 
 const app = express(); 
+app.use(cors({
+    origin: "http://localhost:3000"
+})
+)
 app.use(bodyParser.json());
 
     
