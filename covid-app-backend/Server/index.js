@@ -101,12 +101,21 @@ app.post('/Register', async (req, res) =>{
             return res.json({status: 'error', error: "Invalid Username or Password"})
         }
 
-        if(bcrypt.compare(password, user.password)){
+        // try{ 
+        //    const verifyPassword = await bcrypt.compare(password, user.password)
+        // }catch(err){ 
+        //     res.json({status: "error", error: 'Invalid Username or Password'})
+        // }
 
+        if(await bcrypt.compare(password, user.password)){
+            
             const token = jwt.sign({
                  id: user._id, 
                  username: user.username
                 }, JWT_SECRET)
+                console.log(user.username)
+                console.log(user.password)
+                console.log(bcrypt.compare(password, user.password))
              // success
              return res.json({status: 'Ok', data: token})
              
