@@ -1,14 +1,19 @@
 import React from 'react'
 import { useState } from 'react'
 import Button from '../Button/Button'
+import Success from './Success/Success'
 import './UserRegister.css'
 
+
 const UserRegister = () => {
+
+    
 
 const [confirmPass, setConfirmPass] = useState('');
  const [errconfirm, setErrconfirm] = useState('')
 const [errorPass, setErrorPass] = useState('');
 const [errorusername, setErrorusername] = useState('');
+const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e) => { 
         e.preventDefault()
@@ -25,14 +30,17 @@ const [errorusername, setErrorusername] = useState('');
 
         console.log(result)
 
-        if(username == ''){ 
+        if(username === ''){ 
             setErrorusername("Username can't be Empty")
         }else{ 
             setErrorusername("")
         }
+        if(result.error === "Username already exist"){ 
+            setErrorusername(result.error)
+        }
 
         if(password.length < 8){ 
-            setErrorPass("Password Must be More than 8 Characters")
+            setErrorPass(result.error)
         }else { 
             setErrorPass('')
         }
@@ -42,9 +50,17 @@ const [errorusername, setErrorusername] = useState('');
         }else{ 
             setErrconfirm('')
         }
+        if(result.data == "User Created Successfuly"){ 
+            setSuccess(true)
+        }
+        console.log(result.data)
     }
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+   
+
+
   return (
     <div>
         
@@ -99,7 +115,12 @@ const [errorusername, setErrorusername] = useState('');
             </form>
         </div>
     </div>
+    <div>
+
     </div>
+     { success && <Success />}
+    </div>
+    
   )
 
   
