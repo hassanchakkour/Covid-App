@@ -75,8 +75,7 @@ app.post('/Register', async (req, res) =>{
             username, 
             password
         })
-        res.json('user created successfuly')
-        console.log("User Created", response)
+        return res.json({status: 'Ok', data: "User Created Successfuly"})
     }catch(error){ 
         if(error.code == 11000){ 
             return res.json({status: 'error', error: "Username already exist"})
