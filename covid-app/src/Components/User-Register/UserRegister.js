@@ -4,11 +4,9 @@ import Button from '../Button/Button'
 import Success from './Success/Success'
 import './UserRegister.css'
 
-
 const UserRegister = () => {
 
-    
-
+  
 const [confirmPass, setConfirmPass] = useState('');
  const [errconfirm, setErrconfirm] = useState('')
 const [errorPass, setErrorPass] = useState('');
@@ -28,7 +26,7 @@ const [success, setSuccess] = useState(false);
             })
         }).then((res) => res.json())
 
-        console.log(result)
+        
 
         if(username === ''){ 
             setErrorusername("Username can't be Empty")
@@ -55,10 +53,11 @@ const [success, setSuccess] = useState(false);
         }else{ 
             setErrconfirm('')
         }
-        if(result.data == "User Created Successfuly"){ 
+        if(result.data === "User Created Successfuly"){ 
             setSuccess(true)
         }
-        console.log(result.data)
+        
+       
     }
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

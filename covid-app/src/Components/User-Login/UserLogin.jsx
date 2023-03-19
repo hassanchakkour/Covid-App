@@ -27,16 +27,18 @@ const UserLogin = () => {
             })
         }).then((res) => res.json())
 
-        console.log(result)
+        if(password === ''){
+            setError("Invalid Username or Password")
+        }else{
+            setError('')
+        }
 
         if(result.error === "Invalid Username or Password"){ 
             setError("Invalid Username or Password")
         }else{ 
             setError('')
         }
-        console.log(result.status)
-        console.log(result.sessionId)
-        console.log(result.username)
+      
         
         if(result.status === "Ok"){ 
             navigate('/covid19')
