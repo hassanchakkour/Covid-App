@@ -6,7 +6,8 @@ const bcrypt = require("bcryptjs")
 const User = require('./Model/User');
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-
+const uuid = require('uuid').v4
+const cookieParser = require('cookie-parser')
 
 dotenv.config()
 const { 
@@ -15,14 +16,13 @@ const {
     DBNAME,
     HOST,
     URI,
-    JWT_SECRET
+    ACCESS_TOKEN_SECRET,
+    REFRESH_TOKEN_SECRET
 } = process.env;
 
 const app = express(); 
-app.use(cors({
-    origin: "http://localhost:3000"
-})
-)
+app.use(cors())
+app.use(cookieParser())
 app.use(bodyParser.json());
 
     
@@ -31,7 +31,6 @@ app.use(bodyParser.json());
         console.log("Connected to db!")
     }
         
-    
   
 
 async function startServer(){
@@ -86,8 +85,37 @@ app.post('/Register', async (req, res) =>{
     // res.json({status: "ok"})
 } )
 
+    // MiddleWare
+    // const authenticateToken = (req, res, next) => { 
+    //     const authHeader = req.headers['authorization']
+    //     const token = authHeader && authHeader.split(' ')[1]
+    //     if(token == null) return res.sendStatus(401)
+
+    //     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => { 
+    //         if (err) return res.sendStatus(403)
+    //         res.json(user)
+    //         next()
+    //     })
+    //  }
+
+    //  const generateAccessToken = (user) => { 
+    //     const tokken = jwt.sign(user, ACCESS_TOKEN_SECRET, {expiresIn: '2000s'})
+       
+    //  }
+
+    // app.post('/user', authenticateToken, (req, res) => { 
+
+        
+    //     res.json(username)
+    // }) 
+
+       // session 
+
+       
+
     // Login User
 
+    const sessions = {}
     app.post('/login', async (req, res) => { 
 
         const {username, password} = req.body
@@ -100,28 +128,47 @@ app.post('/Register', async (req, res) =>{
             // fail
             return res.json({status: 'error', error: "Invalid Username or Password"})
         }
-
-        // try{ 
-        //    const verifyPassword = await bcrypt.compare(password, user.password)
-        // }catch(err){ 
-        //     res.json({status: "error", error: 'Invalid Username or Password'})
-        // }
-
         if(await bcrypt.compare(password, user.password)){
-            
-            const token = jwt.sign({
-                 id: user._id, 
-                 username: user.username
-                }, JWT_SECRET)
-                console.log(user.username)
-                console.log(user.password)
-                console.log(bcrypt.compare(password, user.password))
+            const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET)
+            // 
+
              // success
-             return res.json({status: 'Ok', data: token})
+             const sessionId = uuid();
+             sessions[sessionId] = {username, accessToken}
+             res.cookie('sessionId', sessionId)
+             res.json({status: 'Ok', sessionId, username});
+            //  console.log(sessionId)
+            //  console.log(username)
              
         }
         
-        res.json({status: "error", error: 'Invalid Username or Password'})
+        // res.json({status: "error", error: 'Invalid Username or Password'})
     })
 
+    // get logined user 
+
+    app.get('/singleUser', async (req, res) => { 
+        const sessionId =  req.headers.cookie?.split('=')[1];
+        const userSession = sessions[sessionId];
+        // if(userSession){ 
+         res.json({status: 'Ok', userSession, sessionId});
+        //  res.send("Hello")
+
+        // }
+        // else{ 
+        //      res.status(401)
+        // }
+    })
+
+    // logout user 
+
+    app.post('/logout', (req, res) => { 
+    const sessionId =  req.headers.cookie?.split('=')[1];
+    delete sessions[sessionId];
+    res.set('Set-Cookie', `session=; expires=Thu , 01 Jan 1970 00:00:00 GMT`);
+    res.send('Loged out')
+    // res.redirect('http://localhost:3000')
+    })
+
+ 
 startServer()
