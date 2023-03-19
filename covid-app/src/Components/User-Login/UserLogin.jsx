@@ -3,8 +3,12 @@ import { useState } from 'react'
 import Button from '../Button/Button'
 import './Userlogin.css'
 import {ImUser} from 'react-icons/im'
+import {useNavigate} from 'react-router-dom'
+
 
 const UserLogin = () => {
+
+    let navigate = useNavigate();
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -27,8 +31,16 @@ const UserLogin = () => {
 
         if(result.error === "Invalid Username or Password"){ 
             setError("Invalid Username or Password")
+        }else{ 
+            setError('')
         }
-        console.log(result.data)
+        console.log(result.status)
+        console.log(result.sessionId)
+        console.log(result.username)
+        
+        if(result.status === "Ok"){ 
+            navigate('/covid19')
+        }
 
     }
 

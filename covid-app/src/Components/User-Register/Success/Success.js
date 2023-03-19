@@ -38,11 +38,4 @@ const Success = (props) => {
 };
 
 export default Success;
-{
-  /* <div>
-<div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
-<img src={logo} className="w-1/2 h-1/2" />
-  <p class="text-sm">{props.value}</p>
-</div>
-    </div> */
-}
+

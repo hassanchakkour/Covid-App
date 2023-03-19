@@ -35,6 +35,11 @@ const [success, setSuccess] = useState(false);
         }else{ 
             setErrorusername("")
         }
+        if(username < 5){ 
+            setErrorusername("Username Must be More than 5 Characters")
+        }else{ 
+            setErrorusername("")
+        }
         if(result.error === "Username already exist"){ 
             setErrorusername(result.error)
         }
