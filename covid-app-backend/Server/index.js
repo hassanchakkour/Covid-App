@@ -82,32 +82,9 @@ app.post('/Register', async (req, res) =>{
         throw error
     }
 
-    // res.json({status: "ok"})
 } )
 
-    // MiddleWare
-    // const authenticateToken = (req, res, next) => { 
-    //     const authHeader = req.headers['authorization']
-    //     const token = authHeader && authHeader.split(' ')[1]
-    //     if(token == null) return res.sendStatus(401)
-
-    //     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => { 
-    //         if (err) return res.sendStatus(403)
-    //         res.json(user)
-    //         next()
-    //     })
-    //  }
-
-    //  const generateAccessToken = (user) => { 
-    //     const tokken = jwt.sign(user, ACCESS_TOKEN_SECRET, {expiresIn: '2000s'})
-       
-    //  }
-
-    // app.post('/user', authenticateToken, (req, res) => { 
-
-        
-    //     res.json(username)
-    // }) 
+   
 
        // session 
 
@@ -130,34 +107,28 @@ app.post('/Register', async (req, res) =>{
         }
         if(await bcrypt.compare(password, user.password)){
             const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET)
-            // 
+            
 
              // success
              const sessionId = uuid();
              sessions[sessionId] = {username, accessToken}
              res.cookie('sessionId', sessionId)
              res.json({status: 'Ok', sessionId, username});
-            //  console.log(sessionId)
-            //  console.log(username)
+
              
         }
         
-        // res.json({status: "error", error: 'Invalid Username or Password'})
+
     })
 
-    // get logined user 
+
 
     app.get('/singleUser', async (req, res) => { 
         const sessionId =  req.headers.cookie?.split('=')[1];
         const userSession = sessions[sessionId];
-        // if(userSession){ 
-         res.json({status: 'Ok', userSession, sessionId});
-        //  res.send("Hello")
 
-        // }
-        // else{ 
-        //      res.status(401)
-        // }
+         res.json({status: 'Ok', userSession, sessionId});
+
     })
 
     // logout user 
@@ -167,7 +138,7 @@ app.post('/Register', async (req, res) =>{
     delete sessions[sessionId];
     res.set('Set-Cookie', `session=; expires=Thu , 01 Jan 1970 00:00:00 GMT`);
     res.send('Loged out')
-    // res.redirect('http://localhost:3000')
+
     })
 
  
